@@ -1,9 +1,17 @@
+import { sql } from "drizzle-orm";
 import {
   integer,
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
+
+export const orgs = pgTable("orgs", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -12,7 +20,10 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+  orgId: text("org_id").notNull().references(() => orgs.id),
+}, (t) => [
+  uniqueIndex("users_email_lower_key").on(sql`lower(${t.email})`),
+]);
 
 export const customers = pgTable("customers", {
   id: text("id").primaryKey(),
@@ -24,6 +35,7 @@ export const customers = pgTable("customers", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
+  orgId: text("org_id").notNull().references(() => orgs.id),
 });
 
 export const projects = pgTable("projects", {
@@ -38,13 +50,14 @@ export const projects = pgTable("projects", {
 // customer_id predates foreign keys in this codebase; it is not constrained.
 export const invoices = pgTable("invoices", {
   id: text("id").primaryKey(),
-  customerId: text("customer_id").notNull(),
+  customerId: text("customer_id").notNull().references(() => customers.id),
   projectId: text("project_id").references(() => projects.id),
   number: text("number").notNull(),
   status: text("status").notNull().default("draft"),
   totalCents: integer("total_cents").notNull().default(0),
   issuedAt: timestamp("issued_at", { withTimezone: true }).notNull(),
   dueAt: timestamp("due_at", { withTimezone: true }).notNull(),
+  orgId: text("org_id").notNull().references(() => orgs.id),
 });
 
 export const invoiceItems = pgTable("invoice_items", {

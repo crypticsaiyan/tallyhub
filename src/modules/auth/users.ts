@@ -20,7 +20,7 @@ export async function getUser(db: Db, id: string) {
 
 export async function createUser(
   db: Db,
-  input: { id: string; email: string; name: string },
+  input: { id: string; email: string; name: string; orgId: string },
 ) {
   const [user] = await db.insert(users).values(input).returning();
   return user;
