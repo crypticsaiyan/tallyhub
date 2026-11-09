@@ -1,7 +1,7 @@
 import { asc, eq } from "drizzle-orm";
 
 import type { Db } from "../../db/client";
-import { customers } from "../../db/schema";
+import { customers, users } from "../../db/schema";
 import { listInvoicesForCustomer } from "../billing/invoices";
 
 export async function listCustomers(db: Db, ownerId: string) {
@@ -24,7 +24,15 @@ export async function createCustomer(
   db: Db,
   input: { id: string; ownerId: string; name: string; email?: string | null },
 ) {
-  const [customer] = await db.insert(customers).values(input).returning();
+  const [owner] = await db
+    .select({ orgId: users.orgId })
+    .from(users)
+    .where(eq(users.id, input.ownerId));
+  if (!owner) throw new Error(`Owner not found: ${input.ownerId}`);
+  const [customer] = await db
+    .insert(customers)
+    .values({ ...input, orgId: owner.orgId })
+    .returning();
   return customer;
 }
 

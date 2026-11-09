@@ -26,7 +26,12 @@ describe("users", () => {
   });
 
   it("creates a user", async () => {
-    await createUser(db, { id: "usr_new", email: "new@example.com", name: "New" });
+    await createUser(db, {
+      id: "usr_new",
+      email: "new@example.com",
+      name: "New",
+      orgId: "org_usr_04",
+    });
     expect((await getUser(db, "usr_new"))?.email).toBe("new@example.com");
   });
 });
