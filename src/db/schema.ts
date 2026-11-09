@@ -5,6 +5,12 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 
+export const orgs = pgTable("orgs", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
   email: text("email").notNull(),
@@ -12,6 +18,7 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
+  orgId: text("org_id").notNull().references(() => orgs.id),
 });
 
 export const customers = pgTable("customers", {
@@ -24,6 +31,7 @@ export const customers = pgTable("customers", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
+  orgId: text("org_id").notNull().references(() => orgs.id),
 });
 
 export const projects = pgTable("projects", {
@@ -45,6 +53,7 @@ export const invoices = pgTable("invoices", {
   totalCents: integer("total_cents").notNull().default(0),
   issuedAt: timestamp("issued_at", { withTimezone: true }).notNull(),
   dueAt: timestamp("due_at", { withTimezone: true }).notNull(),
+  orgId: text("org_id").notNull().references(() => orgs.id),
 });
 
 export const invoiceItems = pgTable("invoice_items", {
