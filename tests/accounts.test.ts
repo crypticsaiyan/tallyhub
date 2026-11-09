@@ -26,7 +26,7 @@ describe("users", () => {
   });
 
   it("creates a user", async () => {
-    await createUser(db, { id: "usr_new", email: "new@example.com", name: "New" });
+    await createUser(db, { id: "usr_new", email: "new@example.com", name: "New", orgId: "usr_04" });
     expect((await getUser(db, "usr_new"))?.email).toBe("new@example.com");
   });
 });
@@ -38,7 +38,8 @@ describe("api keys", () => {
   });
 
   it("lists a user's keys", async () => {
-    expect((await listApiKeys(db, "usr_02")).map((key) => key.name)).toEqual(["CLI"]);
+    // The migration merged the duplicate Leo account, bringing both of its distinct CLI keys together.
+    expect((await listApiKeys(db, "usr_02")).map((key) => key.name)).toEqual(["CLI", "CLI"]);
   });
 });
 
@@ -53,6 +54,7 @@ describe("customers and projects", () => {
     await createCustomer(db, {
       id: "cus_new",
       ownerId: "usr_04",
+      orgId: "usr_04",
       name: "Zephyr Labs",
       email: "ap@zephyr.example",
     });

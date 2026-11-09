@@ -7,6 +7,7 @@ CREATE TABLE public.users (
     email text NOT NULL,
     name text NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
+    org_id text NOT NULL,
     CONSTRAINT users_pkey PRIMARY KEY (id)
 );
 
@@ -16,6 +17,7 @@ CREATE TABLE public.customers (
     name text NOT NULL,
     email text,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
+    org_id text NOT NULL,
     CONSTRAINT customers_pkey PRIMARY KEY (id),
     CONSTRAINT customers_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES public.users(id)
 );
@@ -38,6 +40,7 @@ CREATE TABLE public.invoices (
     total_cents integer DEFAULT 0 NOT NULL,
     issued_at timestamp with time zone NOT NULL,
     due_at timestamp with time zone NOT NULL,
+    org_id text,
     CONSTRAINT invoices_pkey PRIMARY KEY (id),
     CONSTRAINT invoices_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id)
 );
@@ -90,35 +93,33 @@ CREATE INDEX invoice_items_invoice_id_idx ON public.invoice_items USING btree (i
 -- Data
 --
 
-INSERT INTO public.users (id, email, name, created_at) VALUES ('usr_01', 'maya@tallyhub.io', 'Maya Chen', '2025-01-04T09:12:00Z');
-INSERT INTO public.users (id, email, name, created_at) VALUES ('usr_02', 'leo@northwind.dev', 'Leo Park', '2025-01-11T15:40:00Z');
-INSERT INTO public.users (id, email, name, created_at) VALUES ('usr_03', 'priya@acme.co', 'Priya Raman', '2025-02-02T08:05:00Z');
-INSERT INTO public.users (id, email, name, created_at) VALUES ('usr_04', 'sam@okafor.studio', 'Sam Okafor', '2025-02-19T11:30:00Z');
-INSERT INTO public.users (id, email, name, created_at) VALUES ('usr_05', 'Maya@Tallyhub.io', 'Maya Chen', '2025-03-01T10:00:00Z');
-INSERT INTO public.users (id, email, name, created_at) VALUES ('usr_06', 'jonas@weber.de', 'Jonas Weber', '2025-03-14T13:22:00Z');
-INSERT INTO public.users (id, email, name, created_at) VALUES ('usr_07', 'ana@souza.design', 'Ana Souza', '2025-04-08T17:45:00Z');
-INSERT INTO public.users (id, email, name, created_at) VALUES ('usr_08', 'leo@northwind.dev', 'Leo Park', '2025-04-21T09:00:00Z');
-INSERT INTO public.users (id, email, name, created_at) VALUES ('usr_09', 'ines@duarte.pt', 'Ines Duarte', '2025-05-30T12:10:00Z');
-INSERT INTO public.users (id, email, name, created_at) VALUES ('usr_10', 'tom@becker.io', 'Tom Becker', '2025-06-17T16:35:00Z');
-INSERT INTO public.users (id, email, name, created_at) VALUES ('usr_11', 'kofi@mensah.gh', 'Kofi Mensah', '2025-07-03T07:50:00Z');
-INSERT INTO public.users (id, email, name, created_at) VALUES ('usr_12', 'rin@sato.jp', 'Rin Sato', '2025-08-12T14:15:00Z');
+INSERT INTO public.users (id, email, name, created_at, org_id) VALUES ('usr_01', 'maya@tallyhub.io', 'Maya Chen', '2025-01-04T09:12:00Z', 'usr_01');
+INSERT INTO public.users (id, email, name, created_at, org_id) VALUES ('usr_02', 'leo@northwind.dev', 'Leo Park', '2025-01-11T15:40:00Z', 'usr_02');
+INSERT INTO public.users (id, email, name, created_at, org_id) VALUES ('usr_03', 'priya@acme.co', 'Priya Raman', '2025-02-02T08:05:00Z', 'usr_03');
+INSERT INTO public.users (id, email, name, created_at, org_id) VALUES ('usr_04', 'sam@okafor.studio', 'Sam Okafor', '2025-02-19T11:30:00Z', 'usr_04');
+INSERT INTO public.users (id, email, name, created_at, org_id) VALUES ('usr_06', 'jonas@weber.de', 'Jonas Weber', '2025-03-14T13:22:00Z', 'usr_06');
+INSERT INTO public.users (id, email, name, created_at, org_id) VALUES ('usr_07', 'ana@souza.design', 'Ana Souza', '2025-04-08T17:45:00Z', 'usr_07');
+INSERT INTO public.users (id, email, name, created_at, org_id) VALUES ('usr_09', 'ines@duarte.pt', 'Ines Duarte', '2025-05-30T12:10:00Z', 'usr_09');
+INSERT INTO public.users (id, email, name, created_at, org_id) VALUES ('usr_10', 'tom@becker.io', 'Tom Becker', '2025-06-17T16:35:00Z', 'usr_10');
+INSERT INTO public.users (id, email, name, created_at, org_id) VALUES ('usr_11', 'kofi@mensah.gh', 'Kofi Mensah', '2025-07-03T07:50:00Z', 'usr_11');
+INSERT INTO public.users (id, email, name, created_at, org_id) VALUES ('usr_12', 'rin@sato.jp', 'Rin Sato', '2025-08-12T14:15:00Z', 'usr_12');
 
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_01', 'usr_01', 'Brightline Dental', 'billing@brightline.example', '2025-01-05T10:00:00Z');
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_02', 'usr_02', 'Copperleaf Cafe', 'hello@copperleaf.example', '2025-01-06T10:00:00Z');
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_03', 'usr_03', 'Driftwood Surf Co', NULL, '2025-02-07T10:00:00Z');
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_04', 'usr_05', 'Evergreen Legal', 'ap@evergreen.example', '2025-02-08T10:00:00Z');
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_05', 'usr_04', 'Foxglove Florals', 'orders@foxglove.example', '2025-03-09T10:00:00Z');
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_06', 'usr_06', 'Granite Fitness', 'accounts@granite.example', '2025-03-10T10:00:00Z');
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_07', 'usr_07', 'Harbor Freight Lines', NULL, '2025-04-11T10:00:00Z');
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_08', 'usr_08', 'Indigo Print Shop', 'print@indigo.example', '2025-04-12T10:00:00Z');
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_09', 'usr_09', 'Juniper Health', 'finance@juniper.example', '2025-05-13T10:00:00Z');
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_10', 'usr_10', 'Kestrel Robotics', 'ap@kestrel.example', '2025-05-14T10:00:00Z');
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_11', 'usr_11', 'Lumen Architects', 'studio@lumen.example', '2025-06-15T10:00:00Z');
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_12', 'usr_12', 'Mosaic Bakery', NULL, '2025-06-16T10:00:00Z');
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_13', 'usr_01', 'Nimbus Analytics', 'billing@nimbus.example', '2025-07-17T10:00:00Z');
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_14', 'usr_03', 'Orchard Vet Clinic', 'front@orchard.example', '2025-07-18T10:00:00Z');
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_15', 'usr_02', 'Pinecrest Realty', 'office@pinecrest.example', '2025-08-19T10:00:00Z');
-INSERT INTO public.customers (id, owner_id, name, email, created_at) VALUES ('cus_16', 'usr_08', 'Quarry Brewing', 'taproom@quarry.example', '2025-08-20T10:00:00Z');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_01', 'usr_01', 'Brightline Dental', 'billing@brightline.example', '2025-01-05T10:00:00Z', 'usr_01');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_02', 'usr_02', 'Copperleaf Cafe', 'hello@copperleaf.example', '2025-01-06T10:00:00Z', 'usr_02');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_03', 'usr_03', 'Driftwood Surf Co', NULL, '2025-02-07T10:00:00Z', 'usr_03');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_04', 'usr_01', 'Evergreen Legal', 'ap@evergreen.example', '2025-02-08T10:00:00Z', 'usr_05');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_05', 'usr_04', 'Foxglove Florals', 'orders@foxglove.example', '2025-03-09T10:00:00Z', 'usr_04');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_06', 'usr_06', 'Granite Fitness', 'accounts@granite.example', '2025-03-10T10:00:00Z', 'usr_06');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_07', 'usr_07', 'Harbor Freight Lines', NULL, '2025-04-11T10:00:00Z', 'usr_07');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_08', 'usr_02', 'Indigo Print Shop', 'print@indigo.example', '2025-04-12T10:00:00Z', 'usr_08');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_09', 'usr_09', 'Juniper Health', 'finance@juniper.example', '2025-05-13T10:00:00Z', 'usr_09');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_10', 'usr_10', 'Kestrel Robotics', 'ap@kestrel.example', '2025-05-14T10:00:00Z', 'usr_10');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_11', 'usr_11', 'Lumen Architects', 'studio@lumen.example', '2025-06-15T10:00:00Z', 'usr_11');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_12', 'usr_12', 'Mosaic Bakery', NULL, '2025-06-16T10:00:00Z', 'usr_12');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_13', 'usr_01', 'Nimbus Analytics', 'billing@nimbus.example', '2025-07-17T10:00:00Z', 'usr_01');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_14', 'usr_03', 'Orchard Vet Clinic', 'front@orchard.example', '2025-07-18T10:00:00Z', 'usr_03');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_15', 'usr_02', 'Pinecrest Realty', 'office@pinecrest.example', '2025-08-19T10:00:00Z', 'usr_02');
+INSERT INTO public.customers (id, owner_id, name, email, created_at, org_id) VALUES ('cus_16', 'usr_02', 'Quarry Brewing', 'taproom@quarry.example', '2025-08-20T10:00:00Z', 'usr_08');
 
 INSERT INTO public.projects (id, customer_id, name, status) VALUES ('prj_01', 'cus_01', 'Website refresh', 'active');
 INSERT INTO public.projects (id, customer_id, name, status) VALUES ('prj_02', 'cus_04', 'Q3 retainer', 'active');
@@ -133,46 +134,46 @@ INSERT INTO public.projects (id, customer_id, name, status) VALUES ('prj_10', 'c
 INSERT INTO public.projects (id, customer_id, name, status) VALUES ('prj_11', 'cus_15', 'Signage', 'active');
 INSERT INTO public.projects (id, customer_id, name, status) VALUES ('prj_12', 'cus_02', 'Onboarding flow', 'active');
 
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_01', 'cus_11', NULL, 'INV-1001', 'paid', 145000, '2026-01-19T09:00:00Z', '2026-02-14T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_02', 'cus_05', NULL, 'INV-1002', 'paid', 205000, '2026-02-04T09:00:00Z', '2026-03-05T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_03', 'cus_14', NULL, 'INV-1003', 'draft', 66500, '2026-03-01T09:00:00Z', '2026-04-17T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_04', 'cus_05', NULL, 'INV-1004', 'paid', 249500, '2026-04-02T09:00:00Z', '2026-05-19T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_05', 'cus_02', NULL, 'INV-1005', 'sent', 191500, '2026-05-03T09:00:00Z', '2026-06-05T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_06', 'cus_09', 'prj_09', 'INV-1006', 'paid', 160000, '2026-06-12T09:00:00Z', '2026-07-04T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_07', 'cus_04', NULL, 'INV-1007', 'sent', 210000, '2026-07-22T09:00:00Z', '2026-08-14T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_08', 'cus_12', 'prj_10', 'INV-1008', 'paid', 205000, '2026-08-07T09:00:00Z', '2026-09-05T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_09', 'cus_01', 'prj_01', 'INV-1009', 'paid', 164000, '2026-09-19T09:00:00Z', '2026-10-05T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_10', 'cus_02', NULL, 'INV-1010', 'paid', 80000, '2026-10-24T09:00:00Z', '2026-11-05T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_11', 'cus_09', 'prj_09', 'INV-1011', 'paid', 202500, '2026-01-16T09:00:00Z', '2026-02-13T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_12', 'cus_04', NULL, 'INV-1012', 'paid', 205000, '2026-02-21T09:00:00Z', '2026-03-12T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_13', 'cus_13', NULL, 'INV-1013', 'paid', 305000, '2026-03-06T09:00:00Z', '2026-04-10T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_14', 'cus_01', 'prj_01', 'INV-1014', 'paid', 300000, '2026-04-18T09:00:00Z', '2026-05-12T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_15', 'cus_02', 'prj_12', 'INV-1015', 'paid', 60000, '2026-05-05T09:00:00Z', '2026-06-10T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_16', 'cus_04', 'prj_02', 'INV-1016', 'sent', 152000, '2026-06-17T09:00:00Z', '2026-07-22T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_17', 'cus_98', NULL, 'INV-1017', 'paid', 214000, '2026-07-23T09:00:00Z', '2026-08-13T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_18', 'cus_09', NULL, 'INV-1018', 'paid', 225000, '2026-08-07T09:00:00Z', '2026-09-04T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_19', 'cus_09', 'prj_09', 'INV-1019', 'overdue', 253500, '2026-09-21T09:00:00Z', '2026-10-21T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_20', 'cus_11', NULL, 'INV-1020', 'paid', 80000, '2026-10-22T09:00:00Z', '2026-11-19T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_21', 'cus_11', NULL, 'INV-1021', 'draft', 421000, '2026-01-09T09:00:00Z', '2026-02-12T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_22', 'cus_04', 'prj_02', 'INV-1022', 'sent', 282500, '2026-02-12T09:00:00Z', '2026-03-15T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_23', 'cus_10', NULL, 'INV-1023', 'draft', 60000, '2026-03-15T09:00:00Z', '2026-04-22T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_24', 'cus_09', 'prj_09', 'INV-1024', 'paid', 303000, '2026-04-08T09:00:00Z', '2026-05-09T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_25', 'cus_16', NULL, 'INV-1025', 'paid', 397500, '2026-05-17T09:00:00Z', '2026-06-18T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_26', 'cus_10', 'prj_04', 'INV-1026', 'draft', 80000, '2026-06-01T09:00:00Z', '2026-07-03T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_27', 'cus_02', 'prj_12', 'INV-1027', 'sent', 140000, '2026-07-03T09:00:00Z', '2026-08-17T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_28', 'cus_07', 'prj_03', 'INV-1028', 'overdue', 145000, '2026-08-14T09:00:00Z', '2026-09-24T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_29', 'cus_02', 'prj_12', 'INV-1029', 'overdue', 285000, '2026-09-13T09:00:00Z', '2026-10-19T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_30', 'cus_04', 'prj_02', 'INV-1030', 'draft', 252000, '2026-10-02T09:00:00Z', '2026-11-04T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_31', 'cus_11', NULL, 'INV-1031', 'paid', 60000, '2026-01-17T09:00:00Z', '2026-02-08T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_32', 'cus_03', 'prj_07', 'INV-1032', 'paid', 388500, '2026-02-23T09:00:00Z', '2026-03-04T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_33', 'cus_99', NULL, 'INV-1033', 'paid', 332500, '2026-03-10T09:00:00Z', '2026-04-07T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_34', 'cus_12', NULL, 'INV-1034', 'overdue', 80000, '2026-04-17T09:00:00Z', '2026-05-25T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_35', 'cus_12', 'prj_10', 'INV-1035', 'paid', 620500, '2026-05-04T09:00:00Z', '2026-06-13T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_36', 'cus_12', 'prj_10', 'INV-1036', 'paid', 395500, '2026-06-11T09:00:00Z', '2026-07-24T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_37', 'cus_07', NULL, 'INV-1037', 'sent', 281000, '2026-07-18T09:00:00Z', '2026-08-02T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_38', 'cus_09', NULL, 'INV-1038', 'overdue', 220000, '2026-08-22T09:00:00Z', '2026-09-24T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_39', 'cus_10', NULL, 'INV-1039', 'draft', 432500, '2026-09-02T09:00:00Z', '2026-10-20T09:00:00Z');
-INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at) VALUES ('inv_40', 'cus_11', NULL, 'INV-1040', 'overdue', 113000, '2026-10-16T09:00:00Z', '2026-11-15T09:00:00Z');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_01', 'cus_11', NULL, 'INV-1001', 'paid', 145000, '2026-01-19T09:00:00Z', '2026-02-14T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_02', 'cus_05', NULL, 'INV-1002', 'paid', 205000, '2026-02-04T09:00:00Z', '2026-03-05T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_03', 'cus_14', NULL, 'INV-1003', 'draft', 66500, '2026-03-01T09:00:00Z', '2026-04-17T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_04', 'cus_05', NULL, 'INV-1004', 'paid', 249500, '2026-04-02T09:00:00Z', '2026-05-19T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_05', 'cus_02', NULL, 'INV-1005', 'sent', 191500, '2026-05-03T09:00:00Z', '2026-06-05T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_06', 'cus_09', 'prj_09', 'INV-1006', 'paid', 160000, '2026-06-12T09:00:00Z', '2026-07-04T09:00:00Z', 'usr_09');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_07', 'cus_04', NULL, 'INV-1007', 'sent', 210000, '2026-07-22T09:00:00Z', '2026-08-14T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_08', 'cus_12', 'prj_10', 'INV-1008', 'paid', 205000, '2026-08-07T09:00:00Z', '2026-09-05T09:00:00Z', 'usr_12');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_09', 'cus_01', 'prj_01', 'INV-1009', 'paid', 164000, '2026-09-19T09:00:00Z', '2026-10-05T09:00:00Z', 'usr_01');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_10', 'cus_02', NULL, 'INV-1010', 'paid', 80000, '2026-10-24T09:00:00Z', '2026-11-05T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_11', 'cus_09', 'prj_09', 'INV-1011', 'paid', 202500, '2026-01-16T09:00:00Z', '2026-02-13T09:00:00Z', 'usr_09');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_12', 'cus_04', NULL, 'INV-1012', 'paid', 205000, '2026-02-21T09:00:00Z', '2026-03-12T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_13', 'cus_13', NULL, 'INV-1013', 'paid', 305000, '2026-03-06T09:00:00Z', '2026-04-10T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_14', 'cus_01', 'prj_01', 'INV-1014', 'paid', 300000, '2026-04-18T09:00:00Z', '2026-05-12T09:00:00Z', 'usr_01');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_15', 'cus_02', 'prj_12', 'INV-1015', 'paid', 60000, '2026-05-05T09:00:00Z', '2026-06-10T09:00:00Z', 'usr_02');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_16', 'cus_04', 'prj_02', 'INV-1016', 'sent', 152000, '2026-06-17T09:00:00Z', '2026-07-22T09:00:00Z', 'usr_05');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_17', 'cus_98', NULL, 'INV-1017', 'paid', 214000, '2026-07-23T09:00:00Z', '2026-08-13T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_18', 'cus_09', NULL, 'INV-1018', 'paid', 225000, '2026-08-07T09:00:00Z', '2026-09-04T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_19', 'cus_09', 'prj_09', 'INV-1019', 'overdue', 253500, '2026-09-21T09:00:00Z', '2026-10-21T09:00:00Z', 'usr_09');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_20', 'cus_11', NULL, 'INV-1020', 'paid', 80000, '2026-10-22T09:00:00Z', '2026-11-19T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_21', 'cus_11', NULL, 'INV-1021', 'draft', 421000, '2026-01-09T09:00:00Z', '2026-02-12T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_22', 'cus_04', 'prj_02', 'INV-1022', 'sent', 282500, '2026-02-12T09:00:00Z', '2026-03-15T09:00:00Z', 'usr_05');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_23', 'cus_10', NULL, 'INV-1023', 'draft', 60000, '2026-03-15T09:00:00Z', '2026-04-22T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_24', 'cus_09', 'prj_09', 'INV-1024', 'paid', 303000, '2026-04-08T09:00:00Z', '2026-05-09T09:00:00Z', 'usr_09');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_25', 'cus_16', NULL, 'INV-1025', 'paid', 397500, '2026-05-17T09:00:00Z', '2026-06-18T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_26', 'cus_10', 'prj_04', 'INV-1026', 'draft', 80000, '2026-06-01T09:00:00Z', '2026-07-03T09:00:00Z', 'usr_10');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_27', 'cus_02', 'prj_12', 'INV-1027', 'sent', 140000, '2026-07-03T09:00:00Z', '2026-08-17T09:00:00Z', 'usr_02');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_28', 'cus_07', 'prj_03', 'INV-1028', 'overdue', 145000, '2026-08-14T09:00:00Z', '2026-09-24T09:00:00Z', 'usr_07');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_29', 'cus_02', 'prj_12', 'INV-1029', 'overdue', 285000, '2026-09-13T09:00:00Z', '2026-10-19T09:00:00Z', 'usr_02');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_30', 'cus_04', 'prj_02', 'INV-1030', 'draft', 252000, '2026-10-02T09:00:00Z', '2026-11-04T09:00:00Z', 'usr_05');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_31', 'cus_11', NULL, 'INV-1031', 'paid', 60000, '2026-01-17T09:00:00Z', '2026-02-08T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_32', 'cus_03', 'prj_07', 'INV-1032', 'paid', 388500, '2026-02-23T09:00:00Z', '2026-03-04T09:00:00Z', 'usr_03');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_33', 'cus_99', NULL, 'INV-1033', 'paid', 332500, '2026-03-10T09:00:00Z', '2026-04-07T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_34', 'cus_12', NULL, 'INV-1034', 'overdue', 80000, '2026-04-17T09:00:00Z', '2026-05-25T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_35', 'cus_12', 'prj_10', 'INV-1035', 'paid', 620500, '2026-05-04T09:00:00Z', '2026-06-13T09:00:00Z', 'usr_12');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_36', 'cus_12', 'prj_10', 'INV-1036', 'paid', 395500, '2026-06-11T09:00:00Z', '2026-07-24T09:00:00Z', 'usr_12');
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_37', 'cus_07', NULL, 'INV-1037', 'sent', 281000, '2026-07-18T09:00:00Z', '2026-08-02T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_38', 'cus_09', NULL, 'INV-1038', 'overdue', 220000, '2026-08-22T09:00:00Z', '2026-09-24T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_39', 'cus_10', NULL, 'INV-1039', 'draft', 432500, '2026-09-02T09:00:00Z', '2026-10-20T09:00:00Z', NULL);
+INSERT INTO public.invoices (id, customer_id, project_id, number, status, total_cents, issued_at, due_at, org_id) VALUES ('inv_40', 'cus_11', NULL, 'INV-1040', 'overdue', 113000, '2026-10-16T09:00:00Z', '2026-11-15T09:00:00Z', NULL);
 
 INSERT INTO public.invoice_items (id, invoice_id, description, quantity, unit_cents) VALUES ('itm_01_1', 'inv_01', 'Photography day', 1, 145000);
 INSERT INTO public.invoice_items (id, invoice_id, description, quantity, unit_cents) VALUES ('itm_02_1', 'inv_02', 'Photography day', 1, 145000);
@@ -279,16 +280,16 @@ INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES
 INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_02', 'inv_15', 'usr_06', 'Client asked for itemized hours.', '2026-03-09T15:00:00Z');
 INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_03', 'inv_22', 'usr_12', 'Client asked for itemized hours.', '2026-04-11T15:00:00Z');
 INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_04', 'inv_29', 'usr_02', 'Paid via bank transfer, waiting to clear.', '2026-05-09T15:00:00Z');
-INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_05', 'inv_36', 'usr_08', 'Client disputes the hosting line.', '2026-06-23T15:00:00Z');
+INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_05', 'inv_36', 'usr_02', 'Client disputes the hosting line.', '2026-06-23T15:00:00Z');
 INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_06', 'inv_03', 'usr_11', 'Sent a reminder to the client.', '2026-07-10T15:00:00Z');
 INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_07', 'inv_10', 'usr_06', 'Moved due date after call.', '2026-08-10T15:00:00Z');
-INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_08', 'inv_17', 'usr_08', 'Resent with updated PO number.', '2026-09-23T15:00:00Z');
+INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_08', 'inv_17', 'usr_02', 'Resent with updated PO number.', '2026-09-23T15:00:00Z');
 INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_09', 'inv_24', 'usr_09', 'Discount approved by Maya.', '2026-10-03T15:00:00Z');
-INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_10', 'inv_31', 'usr_05', 'Moved due date after call.', '2026-01-18T15:00:00Z');
+INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_10', 'inv_31', 'usr_01', 'Moved due date after call.', '2026-01-18T15:00:00Z');
 INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_11', 'inv_38', 'usr_03', 'Paid via bank transfer, waiting to clear.', '2026-02-20T15:00:00Z');
 INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_12', 'inv_05', 'usr_11', 'Client disputes the hosting line.', '2026-03-20T15:00:00Z');
 INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_13', 'inv_12', 'usr_09', 'Paid via bank transfer, waiting to clear.', '2026-04-23T15:00:00Z');
-INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_14', 'inv_19', 'usr_05', 'Sent a reminder to the client.', '2026-05-21T15:00:00Z');
+INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_14', 'inv_19', 'usr_01', 'Sent a reminder to the client.', '2026-05-21T15:00:00Z');
 INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_15', 'inv_26', 'usr_03', 'Resent with updated PO number.', '2026-06-20T15:00:00Z');
 INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_16', 'inv_33', 'usr_03', 'Moved due date after call.', '2026-07-28T15:00:00Z');
 INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES ('cmt_17', 'inv_40', 'usr_07', 'Paid via bank transfer, waiting to clear.', '2026-08-19T15:00:00Z');
@@ -299,8 +300,32 @@ INSERT INTO public.comments (id, invoice_id, author_id, body, created_at) VALUES
 INSERT INTO public.api_keys (id, user_id, name, token_hash, last_used_at) VALUES ('key_01', 'usr_01', 'Zapier', 'h_9f2a01', '2026-10-30T08:00:00Z');
 INSERT INTO public.api_keys (id, user_id, name, token_hash, last_used_at) VALUES ('key_02', 'usr_02', 'CLI', 'h_77b1c2', '2026-10-28T19:20:00Z');
 INSERT INTO public.api_keys (id, user_id, name, token_hash, last_used_at) VALUES ('key_03', 'usr_03', 'Accounting sync', 'h_31cc03', NULL);
-INSERT INTO public.api_keys (id, user_id, name, token_hash, last_used_at) VALUES ('key_04', 'usr_05', 'Old laptop', 'h_08de04', '2025-06-01T10:00:00Z');
+INSERT INTO public.api_keys (id, user_id, name, token_hash, last_used_at) VALUES ('key_04', 'usr_01', 'Old laptop', 'h_08de04', '2025-06-01T10:00:00Z');
 INSERT INTO public.api_keys (id, user_id, name, token_hash, last_used_at) VALUES ('key_05', 'usr_07', 'Webhooks', 'h_5a7e05', '2026-11-01T06:45:00Z');
-INSERT INTO public.api_keys (id, user_id, name, token_hash, last_used_at) VALUES ('key_06', 'usr_08', 'CLI', 'h_c4f106', NULL);
+INSERT INTO public.api_keys (id, user_id, name, token_hash, last_used_at) VALUES ('key_06', 'usr_02', 'CLI', 'h_c4f106', NULL);
 INSERT INTO public.api_keys (id, user_id, name, token_hash, last_used_at) VALUES ('key_07', 'usr_10', 'Reporting', 'h_e02a07', '2026-09-12T11:11:00Z');
 INSERT INTO public.api_keys (id, user_id, name, token_hash, last_used_at) VALUES ('key_08', 'usr_12', 'Mobile', 'h_1bb908', '2026-11-05T21:30:00Z');
+
+CREATE TABLE public.orgs (
+    id text NOT NULL,
+    name text NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT orgs_pkey PRIMARY KEY (id)
+);
+
+INSERT INTO public.orgs (id, name, created_at) VALUES ('usr_01', 'Maya Chen Organization', '2025-01-04 09:12:00+00');
+INSERT INTO public.orgs (id, name, created_at) VALUES ('usr_02', 'Leo Park Organization', '2025-01-11 15:40:00+00');
+INSERT INTO public.orgs (id, name, created_at) VALUES ('usr_03', 'Priya Raman Organization', '2025-02-02 08:05:00+00');
+INSERT INTO public.orgs (id, name, created_at) VALUES ('usr_04', 'Sam Okafor Organization', '2025-02-19 11:30:00+00');
+INSERT INTO public.orgs (id, name, created_at) VALUES ('usr_05', 'Maya Chen Organization', '2025-03-01 10:00:00+00');
+INSERT INTO public.orgs (id, name, created_at) VALUES ('usr_06', 'Jonas Weber Organization', '2025-03-14 13:22:00+00');
+INSERT INTO public.orgs (id, name, created_at) VALUES ('usr_07', 'Ana Souza Organization', '2025-04-08 17:45:00+00');
+INSERT INTO public.orgs (id, name, created_at) VALUES ('usr_08', 'Leo Park Organization', '2025-04-21 09:00:00+00');
+INSERT INTO public.orgs (id, name, created_at) VALUES ('usr_09', 'Ines Duarte Organization', '2025-05-30 12:10:00+00');
+INSERT INTO public.orgs (id, name, created_at) VALUES ('usr_10', 'Tom Becker Organization', '2025-06-17 16:35:00+00');
+INSERT INTO public.orgs (id, name, created_at) VALUES ('usr_11', 'Kofi Mensah Organization', '2025-07-03 07:50:00+00');
+INSERT INTO public.orgs (id, name, created_at) VALUES ('usr_12', 'Rin Sato Organization', '2025-08-12 14:15:00+00');
+
+ALTER TABLE ONLY public.customers ADD CONSTRAINT customers_org_id_fkey FOREIGN KEY (org_id) REFERENCES public.orgs(id) ON DELETE RESTRICT;
+ALTER TABLE ONLY public.invoices ADD CONSTRAINT invoices_org_id_fkey FOREIGN KEY (org_id) REFERENCES public.orgs(id);
+CREATE UNIQUE INDEX users_email_lower_key ON public.users USING btree (lower(email));
