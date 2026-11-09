@@ -22,7 +22,7 @@ export async function getCustomer(db: Db, id: string) {
 
 export async function createCustomer(
   db: Db,
-  input: { id: string; ownerId: string; name: string; email?: string | null },
+  input: { id: string; ownerId: string; orgId: string; name: string; email?: string | null },
 ) {
   const [customer] = await db.insert(customers).values(input).returning();
   return customer;
